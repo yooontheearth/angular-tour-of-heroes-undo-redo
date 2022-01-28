@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Hero } from '../hero';
+import { Hero, HeroType } from '../hero';
 import { HeroService } from '../hero.service';
 import { MessageService } from '../message.service';
 
@@ -11,6 +11,7 @@ import { MessageService } from '../message.service';
 export class HeroesComponent implements OnInit {
 
   heroes:Hero[] = [];
+  HeroType=HeroType;
 
   constructor(private heroService: HeroService, private messageService:MessageService) { }
   

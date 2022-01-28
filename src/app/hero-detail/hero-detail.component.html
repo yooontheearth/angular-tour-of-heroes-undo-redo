@@ -1,12 +1,18 @@
 <div *ngIf="hero">
 
     <h2>{{hero.name | uppercase}} Details</h2>
-    <div><span>id: </span>{{hero.id}}</div>
+    <div><label>id: </label>{{hero.id}}</div>
     <div>
       <label for="hero-name">Hero name: </label>
       <input id="hero-name" [(ngModel)]="hero.name" placeholder="name">
     </div>
-  
+    <div>
+      <label for="hero-type">Hero type: </label>
+      <select  [(ngModel)]="hero.type">  
+        <option *ngFor="let heroType of HeroType" [value]="heroType[1]">{{heroType[0]}}</option>
+     </select>
+    </div> 
   </div>
   <button (click)="goBack()">go back</button>
   <button (click)="save()">save</button>
+

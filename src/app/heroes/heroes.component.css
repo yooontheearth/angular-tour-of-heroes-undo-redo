@@ -31,7 +31,7 @@ input {
   padding: .3em 0;
   height: 1.6em;
   border-radius: 4px;
-  display: block;
+  display: flex;
   width: 100%;
 }
 
@@ -60,6 +60,12 @@ input {
   text-align: right;
   margin-right: .8em;
   border-radius: 4px 0 0 4px;
+}
+
+.heroes a > span:not(.badge):last-child{
+  display:inline-block;
+  margin-left:auto;
+  margin-right:45px;
 }
 
 .add-button {

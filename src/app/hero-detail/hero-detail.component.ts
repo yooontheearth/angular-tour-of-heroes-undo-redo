@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Hero } from '../hero';
+import { Hero, HeroType } from '../hero';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -13,6 +13,8 @@ import { HeroService } from '../hero.service';
 export class HeroDetailComponent implements OnInit {
 
   @Input() hero? : Hero;
+  HeroType = Object.entries(HeroType).filter(h => typeof h[1] === 'number');
+
   constructor(private route: ActivatedRoute, 
             private heroService: HeroService,
             private location: Location) { }
@@ -36,5 +38,4 @@ export class HeroDetailComponent implements OnInit {
                   .subscribe(() => this.goBack());
     }
   }
-
 }

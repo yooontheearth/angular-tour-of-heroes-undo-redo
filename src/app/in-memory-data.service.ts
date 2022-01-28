@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
-import { Hero } from './hero';
+import { Hero, HeroType } from './hero';
 
 @Injectable({
   providedIn: 'root'
@@ -11,16 +11,16 @@ export class InMemoryDataService  implements InMemoryDbService{
 
   createDb() {
     const heroes = [
-      { id: 11, name: 'Dr Nice' },
-      { id: 12, name: 'Narco' },
-      { id: 13, name: 'Bombasto' },
-      { id: 14, name: 'Celeritas' },
-      { id: 15, name: 'Magneta' },
-      { id: 16, name: 'RubberMan' },
-      { id: 17, name: 'Dynama' },
-      { id: 18, name: 'Dr IQ' },
-      { id: 19, name: 'Magma' },
-      { id: 20, name: 'Tornado' }
+      { id: 11, name: 'Dr Nice', type:HeroType.Classical },
+      { id: 12, name: 'Narco', type:HeroType.Anti },
+      { id: 13, name: 'Bombasto', type:HeroType.Tragic },
+      { id: 14, name: 'Celeritas', type:HeroType.Classical },
+      { id: 15, name: 'Magneta', type:HeroType.Anti },
+      { id: 16, name: 'RubberMan', type:HeroType.Tragic },
+      { id: 17, name: 'Dynama', type:HeroType.Classical },
+      { id: 18, name: 'Dr IQ', type:HeroType.Anti },
+      { id: 19, name: 'Magma', type:HeroType.Tragic },
+      { id: 20, name: 'Tornado', type:HeroType.Classical }
     ];
     return {heroes};
   }
