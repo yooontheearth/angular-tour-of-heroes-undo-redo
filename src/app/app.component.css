@@ -1,4 +1,5 @@
 /* AppComponent's private CSS styles */
+
 h1 {
   margin-bottom: 0;
 }
@@ -18,4 +19,12 @@ nav a:hover {
 }
 nav a.active {
   background-color: black;
+}
+
+main{
+  flex-grow:1;
+}
+aside{
+  width:300px;
+  margin-left:auto;
 }

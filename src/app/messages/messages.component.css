@@ -17,3 +17,8 @@ h2 {
     color: white;
     background-color: #42545C;
   }
+
+  .message-container{
+    height:98vh;
+    overflow-y:scroll;
+  }
