@@ -7,10 +7,9 @@
 }
 
 input {
-  display: block;
-  width: 100%;
+  width: 200px;
   padding: .5rem;
-  margin: 1rem 0;
+  margin: 1rem .2rem;
   box-sizing: border-box;
 }
 

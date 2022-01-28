@@ -28,7 +28,8 @@ export class HeroesComponent implements OnInit {
     if(!name) {
       return;     
     }
-    this.heroService.addHero({ name } as Hero)
+    const type = HeroType.Classical;
+    this.heroService.addHero({ name, type } as Hero)
                   .subscribe(hero => {
                       this.heroes.push(hero);
                   });
