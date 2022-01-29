@@ -26,7 +26,6 @@ export class HeroService {
                   tap(_ => this.log('fetched heroes')),
                   catchError(this.handleError<Hero[]>('geHeroes', []))
               );
-    this.messageService.add('HeroService: fetched heroes');
     return heroes;
   }
   
