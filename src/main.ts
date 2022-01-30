@@ -4,8 +4,14 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
+import { create } from "rxjs-spy";
+
 if (environment.production) {
   enableProdMode();
+}
+else{
+  const spy = create();
+  spy.show();
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule)

@@ -20,11 +20,11 @@ export class HeroSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Should we search on the store service instead of the hero service? 
     this.heroes$ = this.searchTerms.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((term:string) => this.heroService.searchHeroes(term))
     );
   }
-
 }

@@ -1,23 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { Hero, HeroType } from '../hero';
-import { HeroService } from '../hero.service';
+import { StoreService } from '../store.service';
 import { MessageService } from '../message.service';
+import { DestroyableComponent } from '../destroyable.component'
 
 @Component({
   selector: 'app-heroes',
   templateUrl: './heroes.component.html',
   styleUrls: ['./heroes.component.css']
 })
-export class HeroesComponent implements OnInit {
-
+export class HeroesComponent extends DestroyableComponent implements OnInit {
   heroes:Hero[] = [];
   HeroType=HeroType;
 
-  constructor(private heroService: HeroService, private messageService:MessageService) { }
+  constructor(private storeService:StoreService, private messageService:MessageService) { 
+    super();
+  }
   
   getHeroes(): void {
-    this.messageService.add('HeroesComponent getHeroes');
-    this.heroService.getHeroes().subscribe(heroes => this.heroes = heroes);
+    this.storeService.getHeroes()
+        .pipe((s) => this.unsubscribeOnDestroy(s))
+        .subscribe(heroes => this.heroes = heroes);
   }
 
   ngOnInit(): void {
@@ -30,14 +33,10 @@ export class HeroesComponent implements OnInit {
       return;     
     }
     const type = HeroType.Classical;
-    this.heroService.addHero({ name, type } as Hero)
-                  .subscribe(hero => {
-                      this.heroes.push(hero);
-                  });
+    this.storeService.addHero({ name, type } as Hero);
   }
 
   delete(hero:Hero):void{
-    this.heroes = this.heroes.filter(h => h !== hero);
-    this.heroService.deleteHero(hero.id).subscribe();
+    this.storeService.deleteHero(hero.id);
   }
 }

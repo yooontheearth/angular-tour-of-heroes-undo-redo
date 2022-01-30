@@ -3,7 +3,7 @@ import { Hero, HeroType } from '../hero';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { HeroService } from '../hero.service';
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'app-hero-detail',
@@ -16,7 +16,7 @@ export class HeroDetailComponent implements OnInit {
   HeroType = Object.entries(HeroType).filter(h => typeof h[1] === 'number');
 
   constructor(private route: ActivatedRoute, 
-            private heroService: HeroService,
+            private storeService: StoreService,
             private location: Location) { }
 
   ngOnInit(): void {
@@ -25,7 +25,8 @@ export class HeroDetailComponent implements OnInit {
 
   getHero(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.heroService.getHero(id).subscribe(hero => this.hero = hero);
+    // make a clone of the retrieved hero to avoid modifying data on the store
+    this.storeService.getHero(id).subscribe(hero => this.hero = {...hero} as Hero);
   }
 
   goBack(): void {
@@ -34,7 +35,7 @@ export class HeroDetailComponent implements OnInit {
 
   save():void{
     if(this.hero){
-      this.heroService.updateHero(this.hero)
+      this.storeService.updateHero(this.hero)
                   .subscribe(() => this.goBack());
     }
   }
