@@ -56,7 +56,7 @@ export class StoreService {
   updateHero(hero:Hero):Observable<any>{
     return this.heroService.updateHero(hero).pipe(
                   tap(_ => {
-                    // update the hero in the cached heroes
+                    // update the hero in the cached heroes too
                     this.cachedHeroes[this.cachedHeroes.findIndex(h => h.id === hero.id)] = hero;
                     this.notifyHeroes();
                   }));
