@@ -28,13 +28,17 @@ export class StoreService {
         this.notifyHeroes();
         });
     }           
-    return this.heroes$.asObservable(); 
+    // Return a cloned array
+    return this.heroes$.pipe(
+          map(heroes => [...heroes.map(h => Object.assign({}, h))])
+        ); 
   }
 
   addHero(hero:Hero):void{
     this.heroService.addHero(hero)
               .subscribe(hero => {
-                  this.cachedHeroes.push(hero);
+                  // Add a cloned one
+                  this.cachedHeroes.push({...hero});
                   this.notifyHeroes();
               });
   }
@@ -47,17 +51,17 @@ export class StoreService {
   }
 
   getHero(id: number): Observable<Hero | undefined> {
-    // no need to query to the db
+    // Return a cloned one
     return this.getHeroes().pipe(
-                    map(heroes => heroes.find(h => h.id === id) )
+                    map(heroes => Object.assign({}, heroes.find(h => h.id === id)) )
                   );
   }
 
   updateHero(hero:Hero):Observable<any>{
     return this.heroService.updateHero(hero).pipe(
                   tap(_ => {
-                    // update the hero in the cached heroes too
-                    this.cachedHeroes[this.cachedHeroes.findIndex(h => h.id === hero.id)] = hero;
+                    // Update a hero in the cached heroes with a cloned one
+                    this.cachedHeroes[this.cachedHeroes.findIndex(h => h.id === hero.id)] = {...hero};
                     this.notifyHeroes();
                   }));
   }
