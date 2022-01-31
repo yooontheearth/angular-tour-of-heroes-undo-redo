@@ -37,7 +37,7 @@ export class StoreService {
   addHero(hero:Hero):void{
     this.heroService.addHero(hero)
               .subscribe(hero => {
-                  // Add a cloned one
+                  // Cache a cloned one
                   this.cachedHeroes.push({...hero});
                   this.notifyHeroes();
               });
