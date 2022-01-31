@@ -25,8 +25,7 @@ export class HeroDetailComponent implements OnInit {
 
   getHero(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    // make a clone of the retrieved hero to avoid modifying data on the store before a saving action
-    this.storeService.getHero(id).subscribe(hero => this.hero = {...hero} as Hero);
+    this.storeService.getHero(id).subscribe(hero => this.hero = hero);
   }
 
   goBack(): void {
