@@ -1,0 +1,25 @@
+
+<div id="undo-redo-container">
+    <div>
+        <div>
+            <button [disabled]="!(isUndoable | async)" (click)="undo()">Undo</button>
+        </div>
+        <div *ngIf="!(isUndoable | async)">
+            No undo.
+        </div>
+        <ol>
+            <li *ngFor="let c of undoRedoService.undoStack">{{ c.description }}</li>
+        </ol>
+    </div>
+    <div>
+        <div>
+            <button [disabled]="!(isRedoable | async)" (click)="redo()">Redo</button>
+        </div>
+        <div *ngIf="!(isRedoable | async)">
+            No redo.
+        </div>
+        <ol>
+            <li *ngFor="let c of undoRedoService.redoStack">{{ c.description }}</li>
+        </ol>
+    </div>
+</div>

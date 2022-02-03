@@ -18,7 +18,7 @@ export class HeroesComponent extends DestroyableComponent implements OnInit {
   }
   
   getHeroes(): void {
-    this.storeService.getHeroes()
+    this.storeService.getHeroesKeepingUpdated()
         .pipe((s) => this.unsubscribeOnDestroy(s))
         .subscribe(heroes => this.heroes = heroes);
   }

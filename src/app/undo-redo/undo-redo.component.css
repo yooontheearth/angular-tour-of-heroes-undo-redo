@@ -1,0 +1,23 @@
+#undo-redo-container{
+    display:flex;
+}
+#undo-redo-container > div{
+    width:50%;
+}
+button{
+    width:100px;
+    color: #333;
+    background-color: #eee;
+    margin-bottom: 12px;
+    padding: 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+button:hover:not(:disabled) {
+    color: white;
+    background-color: #42545C;
+  }
+  ol{
+    margin-top:0px;
+    padding-left:20px;
+  }

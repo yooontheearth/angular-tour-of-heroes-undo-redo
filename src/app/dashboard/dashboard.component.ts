@@ -26,7 +26,7 @@ export class DashboardComponent extends DestroyableComponent implements OnInit{
   }
 
   getHeroes(): void {
-    this.storeService.getHeroes()
+    this.storeService.getHeroesKeepingUpdated()
                   .pipe((s) => this.unsubscribeOnDestroy(s))
                   .subscribe(heroes => this.heroes = heroes.slice(1, 5));
   }
