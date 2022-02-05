@@ -38,6 +38,6 @@ export class HeroesComponent extends DestroyableComponent implements OnInit {
 
   delete(hero:Hero):void{
     // It would be better to block UI interaction while deleting a hero
-    //this.storeService.deleteHero(hero.id);
+    this.storeService.deleteHero(hero.id).subscribe();
   }
 }

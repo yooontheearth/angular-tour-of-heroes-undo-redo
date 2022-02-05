@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject , Subject, of, identity, switchMap } from 'rxjs';
 import { take, takeUntil, filter, tap, map, pipe } from 'rxjs';
 import { tag } from 'rxjs-spy/operators';
-import { AddHeroCommand, Command } from './command';
+import { AddHeroCommand, DeleteHeroCommand, Command, UpdateHeroCommand } from './command';
 
 import { Hero } from './hero';
 import { HeroService } from './hero.service';
@@ -33,7 +33,6 @@ export class StoreService {
     }           
     // Return a cloned array
     return this.heroes$.pipe(
-          tag('get-heroes'),
           (onlyOnce ? take(1) : identity),  // Notify only once or keep updated
           map(heroes => [...heroes.map(h => Object.assign({}, h))])
         ); 
@@ -43,14 +42,13 @@ export class StoreService {
     // If the heroes are not yet cached by the time this method is called, the default empty array will be emitted by BehaviroSubject.
     // That means a hero will be null in that case... Leave it as it is because this is a sample app :p
     return this.getHeroesKeepingUpdated(true).pipe(
-                    tag('get-hero'),
                     map(heroes => heroes.find(h => h.id === id))
                   );
   }
 
   addHero(hero:Hero):Observable<Hero>{
     const command = new AddHeroCommand(hero, this.heroService, this);
-    return this.undoRedoService.execute(command).pipe(tag('add-hero'));
+    return this.undoRedoService.execute(command);
   }
 
   addHeroToLocalStore(hero:Hero):void{
@@ -64,16 +62,10 @@ export class StoreService {
                   filter(hero => !!hero),
                   map(hero => hero as Hero),
                   switchMap(hero => {
-                      return this.heroService.deleteHero(hero.id).pipe(
-                        tag('delete-hero1'),
-                                          tap(_ => {
-                                            this.deleteHeroFromLocalStore(hero.id);
-                                          })
-                    )}),
-                    tag('delete-hero2'),
-                );
-      // const command = new DeleteHeroCommand(hero, this.heroService, this);
-      // this.undoRedoService.execute(command);
+                      const command = new DeleteHeroCommand(hero, this.heroService, this);
+                      return this.undoRedoService.execute(command);
+                    })
+                );      
   }
 
   deleteHeroFromLocalStore(id:number):void{
@@ -82,15 +74,15 @@ export class StoreService {
   }  
 
   updateHero(hero:Hero):Observable<any>{
-    this.getHero(hero.id).subscribe(hero => {
 
-    });
-
-    return this.heroService.updateHero(hero)
-            .pipe(
-              tap(_ => {
-                
-             }));
+    return this.getHero(hero.id).pipe(
+                  filter(hero => !!hero),
+                  map(hero => hero as Hero),
+                  switchMap(old => {
+                      const command = new UpdateHeroCommand(old, Object.assign({}, hero), this.heroService, this);
+                      return this.undoRedoService.execute(command);
+                    })
+                 );
   }
 
   updateHeroOnLocalStore(hero:Hero):void{

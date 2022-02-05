@@ -32,67 +32,74 @@ export class AddHeroCommand implements Command<Hero>{
                     );
     }
     undo(): Observable<Hero> {
-        return this.storeService.deleteHero(this.hero.id)
-            .pipe(
-                tap(_ => {
-                    this.storeService.deleteHeroFromLocalStore(this.hero.id);
-                })
-            );
+        return this.heroService.deleteHero(this.hero.id)
+                    .pipe(
+                        tap(_ => {
+                            this.storeService.deleteHeroFromLocalStore(this.hero.id);
+                        })
+                    );
     }
     redo(): Observable<Hero> {
         return this.execute();
     }    
 }
 
-// export class DeleteHeroCommand implements Command<Hero>{
-//     description:string;
-//     constructor(
-//         private hero:Hero,
-//         private heroService:HeroService,
-//         private storeService:StoreService
-//         ){
-//             this.description = `Delete ${hero.name}`;
-//         }
-//     execute(): Observable<Hero> {
-//         this.heroService.deleteHero(this.hero.id)
-//             .subscribe(() => {
-//                 this.storeService.deleteHeroFromLocalStore(this.hero.id);
-//             });
-//     }
-//     undo(): Observable<Hero> {
-//         this.heroService.addHero(this.hero)
-//               .subscribe(hero => {
-//                   this.storeService.addHeroToLocalStore(hero);
-//               });
-//     }
-//     redo(): Observable<Hero> {
-//         this.execute();
-//     }    
-// }
+export class DeleteHeroCommand implements Command<Hero>{
+    description:string;
+    constructor(
+        private hero:Hero,
+        private heroService:HeroService,
+        private storeService:StoreService
+        ){
+            this.description = `Delete ${hero.name}`;
+        }
+    execute(): Observable<Hero> {
+        return this.heroService.deleteHero(this.hero.id)
+                    .pipe(
+                        tap(_ => {
+                            this.storeService.deleteHeroFromLocalStore(this.hero.id);
+                        })
+                    );
+    }
+    undo(): Observable<Hero> {
+        return this.heroService.addHero(this.hero)
+                    .pipe(
+                        tap(hero => {
+                            this.storeService.addHeroToLocalStore(hero);
+                        })
+                    );
+    }
+    redo(): Observable<Hero> {
+        return this.execute();
+    }    
+}
 
-// export class UpdateHeroCommand implements Command{
-//     description:string;
-//     constructor(
-//         private hero:Hero,
-//         private heroService:HeroService,
-//         private storeService:StoreService
-//         ){
-//             this.description = `Update ${hero.name}`;
-//         }
-//     execute(): void {
-//         this.heroService.deleteHero(this.hero.id)
-//             .subscribe(() => {
-//                 this.storeService.deleteHeroFromLocalStore(this.hero.id);
-//             });
-//     }
-//     undo(): void {
-//         this.heroService.addHero(this.hero)
-//               .subscribe(hero => {
-//                   this.storeService.addHeroToLocalStore(hero);
-//               });
-//     }
-//     redo(): void {
-//         this.execute();
-//     }    
-// }
+export class UpdateHeroCommand implements Command<Hero>{
+    description:string;
+    constructor(
+        private oldHero:Hero,
+        private newHero:Hero,
+        private heroService:HeroService,
+        private storeService:StoreService
+        ){
+            this.description = `Update ${oldHero.name} to ${newHero.name}`;
+        }
+    execute(): Observable<Hero> {
+        return this.heroService.updateHero(this.newHero)
+            .pipe(
+              tap(_ => {
+                this.storeService.updateHeroOnLocalStore(this.newHero);
+             }));
+    }
+    undo(): Observable<Hero> {
+        return this.heroService.updateHero(this.oldHero)
+            .pipe(
+              tap(_ => {
+                this.storeService.updateHeroOnLocalStore(this.oldHero);
+             }));        
+    }
+    redo(): Observable<Hero> {
+        return this.execute();
+    }    
+}
 
