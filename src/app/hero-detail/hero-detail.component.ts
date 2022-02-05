@@ -24,6 +24,7 @@ export class HeroDetailComponent implements OnInit {
   }
 
   getHero(): void {
+    // TODO : Fix not updating a editing hero when a hero on a store service gets updated
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.storeService.getHero(id).subscribe(hero => this.hero = hero);
   }

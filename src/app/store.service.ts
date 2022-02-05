@@ -39,8 +39,7 @@ export class StoreService {
   }
 
   getHero(id: number): Observable<Hero | undefined> {
-    // If the heroes are not yet cached by the time this method is called, the default empty array will be emitted by BehaviroSubject.
-    // That means a hero will be null in that case... Leave it as it is because this is a sample app :p
+    // TODO : Fix returning an empty hero when a detail page is requested first
     return this.getHeroesKeepingUpdated(true).pipe(
                     map(heroes => heroes.find(h => h.id === id))
                   );
@@ -74,7 +73,6 @@ export class StoreService {
   }  
 
   updateHero(hero:Hero):Observable<any>{
-
     return this.getHero(hero.id).pipe(
                   filter(hero => !!hero),
                   map(hero => hero as Hero),
