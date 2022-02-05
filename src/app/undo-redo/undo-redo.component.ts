@@ -19,9 +19,9 @@ export class UndoRedoComponent implements OnInit {
     this.isUndoable = this.undoRedoService.getUndoable();
   }
   undo():void{
-    this.undoRedoService.undo();
+    this.undoRedoService.undo().subscribe();
   }
   redo():void{
-    this.undoRedoService.redo();
+    this.undoRedoService.redo().subscribe();
   }
 }

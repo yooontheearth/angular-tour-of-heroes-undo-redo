@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Command } from './command';
 
 @Injectable({
@@ -10,8 +10,8 @@ export class UndoRedoService {
   private isRedoable$ = new BehaviorSubject<boolean>(false);
   private isUndoable$ = new BehaviorSubject<boolean>(false);
 
-  undoStack: Array<Command> = [];
-  redoStack: Array<Command> = [];
+  undoStack: Array<Command<any>> = [];
+  redoStack: Array<Command<any>> = [];
 
   constructor() { }
 
@@ -22,27 +22,36 @@ export class UndoRedoService {
     return this.isUndoable$.asObservable();
   }
 
-  execute(command:Command):void{
-    command.execute();
-    this.undoStack.unshift(command);
-    this.redoStack.length = 0;
-    this.updateStacks();
+  execute<T>(command:Command<T>):Observable<T>{
+    return command.execute().pipe(
+      tap(_ => {
+        this.undoStack.unshift(command);
+        this.redoStack.length = 0;
+        this.updateStacks();
+      })
+    );    
   }
-  undo():void{
+  undo<T>():Observable<T>{
     const command = this.undoStack.shift();
     if(command){
-      command.undo();
-      this.redoStack.unshift(command);
+      return command.undo().pipe(
+        tap(_ => {
+          this.redoStack.unshift(command);
+          this.updateStacks();
+        }));
     }
-    this.updateStacks();
+    return of();
   }
-  redo():void{
+  redo<T>():Observable<T>{
     const command = this.redoStack.shift();
     if(command){
-      command.redo();
-      this.undoStack.unshift(command);
+      return command.redo().pipe(
+        tap(_ => {
+          this.undoStack.unshift(command);
+          this.updateStacks();
+        }));
     }
-    this.updateStacks();
+    return of();
   }
   private updateStacks(){
     this.isUndoable$.next(this.undoStack.length > 0);

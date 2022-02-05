@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject , Subject, of, identity } from 'rxjs';
+import { Observable, BehaviorSubject , Subject, of, identity, switchMap } from 'rxjs';
 import { take, takeUntil, filter, tap, map, pipe } from 'rxjs';
 import { tag } from 'rxjs-spy/operators';
-import { AddHeroCommand, DeleteHeroCommand, Command } from './command';
+import { AddHeroCommand, Command } from './command';
 
 import { Hero } from './hero';
 import { HeroService } from './hero.service';
@@ -33,14 +33,24 @@ export class StoreService {
     }           
     // Return a cloned array
     return this.heroes$.pipe(
+          tag('get-heroes'),
           (onlyOnce ? take(1) : identity),  // Notify only once or keep updated
           map(heroes => [...heroes.map(h => Object.assign({}, h))])
         ); 
   }
 
-  addHero(hero:Hero):void{
+  getHero(id: number): Observable<Hero | undefined> {
+    // If the heroes are not yet cached by the time this method is called, the default empty array will be emitted by BehaviroSubject.
+    // That means a hero will be null in that case... Leave it as it is because this is a sample app :p
+    return this.getHeroesKeepingUpdated(true).pipe(
+                    tag('get-hero'),
+                    map(heroes => heroes.find(h => h.id === id))
+                  );
+  }
+
+  addHero(hero:Hero):Observable<Hero>{
     const command = new AddHeroCommand(hero, this.heroService, this);
-    this.undoRedoService.execute(command);
+    return this.undoRedoService.execute(command).pipe(tag('add-hero'));
   }
 
   addHeroToLocalStore(hero:Hero):void{
@@ -49,38 +59,44 @@ export class StoreService {
     this.notifyHeroes();
   }
 
-  deleteHero(id:number):void{
-    this.getHero(id).subscribe(hero => {
-      if(hero){
-        const command = new DeleteHeroCommand(hero, this.heroService, this);
-        this.undoRedoService.execute(command);
-      }      
-    });   
+  deleteHero(id:number):Observable<Hero>{
+    return this.getHero(id).pipe(
+                  filter(hero => !!hero),
+                  map(hero => hero as Hero),
+                  switchMap(hero => {
+                      return this.heroService.deleteHero(hero.id).pipe(
+                        tag('delete-hero1'),
+                                          tap(_ => {
+                                            this.deleteHeroFromLocalStore(hero.id);
+                                          })
+                    )}),
+                    tag('delete-hero2'),
+                );
+      // const command = new DeleteHeroCommand(hero, this.heroService, this);
+      // this.undoRedoService.execute(command);
   }
 
   deleteHeroFromLocalStore(id:number):void{
     this.cachedHeroes = this.cachedHeroes.filter(h => h.id !== id);
     this.notifyHeroes();
-  }
-
-  getHero(id: number): Observable<Hero | undefined> {
-    // If the heroes are not yet cached by the time this method is called, the default empty array will be emitted by BehaviroSubject.
-    // That means a hero will be null in that case... Leave it as it is because this is a sample app :p
-    return this.getHeroesKeepingUpdated(true).pipe(
-                    map(heroes => heroes.find(h => h.id === id))
-                  );
-  }
+  }  
 
   updateHero(hero:Hero):Observable<any>{
-    // update command
+    this.getHero(hero.id).subscribe(hero => {
+
+    });
 
     return this.heroService.updateHero(hero)
             .pipe(
               tap(_ => {
-                // Update a hero in the cached heroes with a cloned one
-                this.cachedHeroes[this.cachedHeroes.findIndex(h => h.id === hero.id)] = {...hero};
-                this.notifyHeroes();
+                
              }));
+  }
+
+  updateHeroOnLocalStore(hero:Hero):void{
+    // Update a hero in the cached heroes with a cloned one
+    this.cachedHeroes[this.cachedHeroes.findIndex(h => h.id === hero.id)] = {...hero};
+    this.notifyHeroes();
   }
 
   private notifyHeroes(){
