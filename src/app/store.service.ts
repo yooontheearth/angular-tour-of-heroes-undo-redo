@@ -90,6 +90,7 @@ export class StoreService {
   }
 
   private notifyHeroes(){
+    this.cachedHeroes = this.cachedHeroes.sort((a, b) => a.id - b.id);
     this.heroes$.next(this.cachedHeroes);
   }
   
