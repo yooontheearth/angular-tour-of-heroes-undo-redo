@@ -42,7 +42,3 @@ export const getHeroes =  createAction(
     '[Heroes] Get Heroes Success',
     props<{ heroes:ReadonlyArray<Hero>}>()
   );
-  export const getHero =  createAction(
-    '[Heroes] Get Hero',
-    props<{ id:number }>()
-  ); 
