@@ -42,7 +42,11 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
   getHero(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.store.select(selectHero(id)).subscribe(h => {
-      this.hero = {...h} as Hero;
+      if(!h){
+        this.store.dispatch(HeroActions.getHeroes());
+      }else{
+        this.hero = {...h} as Hero;
+      }
     });
   }
 
