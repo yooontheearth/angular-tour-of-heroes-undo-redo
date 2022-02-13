@@ -9,21 +9,39 @@ import * as HeroActions from './hero.actions'
 @Injectable()
 export class Heroffects {
 
-//   loadMovies$ = createEffect(() => this.actions$.pipe(
-//     ofType('[Movies Page] Load Movies'),
-//     mergeMap(() => this.moviesService.getAll()
-//       .pipe(
-//         map(movies => ({ type: '[Movies API] Movies Loaded Success', payload: movies })),
-//         catchError(() => EMPTY)
-//       ))
-//     )
-//   );
-
 loadHeroes$ = createEffect(() => this.actions$.pipe(
     ofType(HeroActions.getHeroes),
     mergeMap(() => this.heroService.getHeroes().pipe(
                     tap(_ => this.messageService.add('fetched heroes in an effect')),
-                    map(heroes => HeroActions.getHeroesSuccess({ heroes }))
+                    map(heroes => HeroActions.getHeroesSuccess({ heroes })),
+                    catchError(() => EMPTY)
+                )
+    )
+)); 
+
+addHero$ = createEffect(() => this.actions$.pipe(
+    ofType(HeroActions.addHero),
+    mergeMap((action) => this.heroService.addHero(action.hero).pipe(
+                    tap(_ => this.messageService.add('add hero in an effect')),
+                    map(hero => HeroActions.addHeroSuccess({ hero }))
+                )
+    )
+)); 
+
+deleteHero$ = createEffect(() => this.actions$.pipe(
+    ofType(HeroActions.deleteHero),
+    mergeMap((action) => this.heroService.deleteHero(action.id).pipe(
+                    tap(_ => this.messageService.add('delete hero in an effect')),
+                    map(id => HeroActions.deleteHeroSuccess( id ))
+                )
+    )
+)); 
+
+updateHero$ = createEffect(() => this.actions$.pipe(
+    ofType(HeroActions.updateHero),
+    mergeMap((action) => this.heroService.updateHero(action.hero).pipe(
+                    tap(_ => this.messageService.add('update hero in an effect')),
+                    map(hero => HeroActions.updateHeroSuccess({ hero }))
                 )
     )
 )); 

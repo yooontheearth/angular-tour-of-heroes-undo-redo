@@ -27,14 +27,11 @@ export class HeroesComponent implements OnInit {
       return;     
     }
     const type = HeroType.Classical;
-    // this.heroService.addHero({ name, type } as Hero)
-    //               .subscribe(hero => {
-    //                   this.heroes.push(hero);
-    //               });
+    const hero = { name, type } as Hero;
+    this.store.dispatch(HeroActions.addHero({ hero }));
   }
 
   delete(hero:Hero):void{
-    // this.heroes = this.heroes.filter(h => h !== hero);
-    // this.heroService.deleteHero(hero.id).subscribe();
+    this.store.dispatch(HeroActions.deleteHero({ id:hero.id }));
   }
 }
