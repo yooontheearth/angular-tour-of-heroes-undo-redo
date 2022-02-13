@@ -53,11 +53,12 @@ export class HeroService {
                 );
   }
 
-  deleteHero(id:number):Observable<Hero>{
+  deleteHero(id:number):Observable<number>{
     const url = `${this.heroesUrl}/${id}`;
     return this.http.delete<Hero>(url, this.httpOptions).pipe(
       tap(_ => this.log(`deleted hero id=${id}`)),
-      catchError(this.handleError<Hero>('deleteHero'))
+      catchError(this.handleError<Hero>('deleteHero')),
+      switchMap(() => of(id))
     );
   }
 

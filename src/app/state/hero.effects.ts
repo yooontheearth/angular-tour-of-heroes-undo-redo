@@ -32,7 +32,7 @@ deleteHero$ = createEffect(() => this.actions$.pipe(
     ofType(HeroActions.deleteHero),
     mergeMap((action) => this.heroService.deleteHero(action.id).pipe(
                     tap(_ => this.messageService.add('delete hero in an effect')),
-                    map(id => HeroActions.deleteHeroSuccess( id ))
+                    map(id => HeroActions.deleteHeroSuccess({ id }))
                 )
     )
 )); 
