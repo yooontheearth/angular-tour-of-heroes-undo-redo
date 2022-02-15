@@ -12,6 +12,7 @@ import { HeroDetailComponent } from './hero-detail/hero-detail.component';
 import { MessagesComponent } from './messages/messages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HeroSearchComponent } from './hero-search/hero-search.component';
+import { UndoRedoComponent } from './undo-redo/undo-redo.component';
 
 import { StoreModule } from '@ngrx/store';
 import { heroReducer } from './state/hero.reducer';
@@ -25,7 +26,8 @@ import { Heroffects } from './state/hero.effects';
     HeroDetailComponent,
     MessagesComponent,
     DashboardComponent,
-    HeroSearchComponent
+    HeroSearchComponent,
+    UndoRedoComponent
   ],
   imports: [    
     HttpClientModule,
