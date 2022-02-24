@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Hero } from './hero';
-import { Observable, of } from 'rxjs';
-import { map, tap, catchError, switchMap } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { map, tap, catchError, switchMap, concatMap, mergeMap } from 'rxjs/operators';
 import { MessageService } from './message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -27,16 +27,14 @@ export class HeroService {
               );
     return heroes;
   }
-  
-  getHero(id: number): Observable<Hero> {
-    const url = `${this.heroesUrl}/${id}`;
-    const hero = this.http.get<Hero>(url).pipe(
-        tap(_ => this.log(`fetched hero id=${id}`)),
-        catchError(this.handleError<Hero>(`getHero id=${id}`))
-      );
-    return hero;
-  }
 
+  save(heroes:Hero[]):Observable<any>{
+    return this.http.post('commands/resetDb', { clear: true }).pipe(
+      catchError(this.handleError<any>('save', [])),
+      mergeMap(() => forkJoin(heroes.map(h => this.addHero(h))))
+    );
+  }
+  
   addHero(hero:Hero):Observable<Hero>{
     return this.http.post<Hero>(this.heroesUrl, hero, this.httpOptions).pipe(
       tap((newHero:Hero) => this.log(`added hero w/ id=${newHero.id}`)),

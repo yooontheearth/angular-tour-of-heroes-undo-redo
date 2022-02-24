@@ -1,5 +1,6 @@
+import { HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { InMemoryDbService } from 'angular-in-memory-web-api';
+import { InMemoryDbService, RequestInfo  } from 'angular-in-memory-web-api';
 import { Hero, HeroType } from './hero';
 
 @Injectable({
@@ -9,8 +10,8 @@ export class InMemoryDataService  implements InMemoryDbService{
 
   constructor() { }
 
-  createDb() {
-    const heroes = [
+  createDb(reqInfo?:RequestInfo ) {
+    let heroes = [
       { id: 11, name: 'Dr Nice', type:HeroType.Classical },
       { id: 12, name: 'Narco', type:HeroType.Anti },
       { id: 13, name: 'Bombasto', type:HeroType.Tragic },
@@ -22,7 +23,10 @@ export class InMemoryDataService  implements InMemoryDbService{
       { id: 19, name: 'Magma', type:HeroType.Tragic },
       { id: 20, name: 'Tornado', type:HeroType.Classical }
     ];
-    return {heroes};
+
+    if(!!reqInfo && reqInfo.collectionName === 'resetDb')
+      heroes = [];
+    return  {heroes};
   }
 
   // Overrides the genId method to ensure that a hero always has an id.

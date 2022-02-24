@@ -38,7 +38,10 @@ export const searchHeroes = createAction(
 export const getHeroes =  createAction(
     '[Heroes] Get Heroes'
   );
-  export const getHeroesSuccess =  createAction(
-    '[Heroes] Get Heroes Success',
-    props<{ heroes:ReadonlyArray<Hero>}>()
-  );
+export const getHeroesSuccess =  createAction(
+  '[Heroes] Get Heroes Success',
+  props<{ heroes:ReadonlyArray<Hero>}>()
+);
+
+
+  
