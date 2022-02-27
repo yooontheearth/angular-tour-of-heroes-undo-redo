@@ -8,7 +8,7 @@
             No undo.
         </div>
         <ol>
-            <li *ngFor="let c of undoRedoService.undoStack">{{ c.description }}</li>
+            <li *ngFor="let c of undoStack | async">{{ c.description }}</li>
         </ol>
     </div>
     <div>
@@ -19,7 +19,7 @@
             No redo.
         </div>
         <ol>
-            <li *ngFor="let c of undoRedoService.redoStack">{{ c.description }}</li>
+            <li *ngFor="let c of redoStack  | async">{{ c.description }}</li>
         </ol>
     </div>
 </div>

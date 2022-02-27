@@ -15,7 +15,7 @@ import { HeroSearchComponent } from './hero-search/hero-search.component';
 import { UndoRedoComponent } from './undo-redo/undo-redo.component';
 
 import { StoreModule } from '@ngrx/store';
-import { heroReducer } from './state/hero.reducer';
+import { heroReducer, metaReducers } from './state/hero.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { Heroffects } from './state/hero.effects';
 
@@ -37,7 +37,7 @@ import { Heroffects } from './state/hero.effects';
     HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
     ),
-    StoreModule.forRoot({ heroes:heroReducer }, {}),
+    StoreModule.forRoot({ heroes:heroReducer }, { metaReducers }),
     EffectsModule.forRoot([Heroffects])
   ],
   providers: [],

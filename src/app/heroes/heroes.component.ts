@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Hero, HeroType } from '../hero';
 import { MessageService } from '../message.service';
 import { ActionsSubject, Store } from '@ngrx/store';
-import { selectHeroes } from '../state/hero.selectors';
+import { selectCurrentHeroes } from '../state/hero.selectors';
 import * as HeroActions from '../state/hero.actions'
-import { UndoRedoService } from '../undo-redo.service';
-import { AddHeroCommand, DeleteHeroCommand } from '../command';
 
 @Component({
   selector: 'app-heroes',
@@ -14,13 +12,11 @@ import { AddHeroCommand, DeleteHeroCommand } from '../command';
 })
 export class HeroesComponent implements OnInit {
 
-  heroes$ = this.store.select(selectHeroes);
+  heroes$ = this.store.select(selectCurrentHeroes);
   HeroType=HeroType;
 
   constructor(private store: Store, 
-    private undoRedoService:UndoRedoService,
-    private actionsSubject:ActionsSubject,
-     private messageService:MessageService) { }
+    private messageService:MessageService) { }
   
   ngOnInit(): void {
     this.store.dispatch(HeroActions.getHeroes());
@@ -33,10 +29,10 @@ export class HeroesComponent implements OnInit {
     }
     const type = HeroType.Classical;
     const hero = { name, type } as Hero;
-    this.undoRedoService.execute(new AddHeroCommand(hero, this.store, this.actionsSubject));
+    this.store.dispatch(HeroActions.addHero({ hero }));
   }
 
   delete(hero:Hero):void{
-    this.undoRedoService.execute(new DeleteHeroCommand(hero, this.store));
+    this.store.dispatch(HeroActions.deleteHero({ id:hero.id }));
   }
 }

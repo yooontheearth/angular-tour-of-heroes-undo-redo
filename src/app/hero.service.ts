@@ -41,25 +41,7 @@ export class HeroService {
       catchError(this.handleError<Hero>('addHero'))
     );
   }
-
-  updateHero(hero:Hero):Observable<Hero>{
-    return this.http.put(this.heroesUrl, hero, this.httpOptions)
-                .pipe(
-                    tap(_ => this.log(`updated hero id=${hero.id}`)),                   
-                    catchError(this.handleError<any>('updateHero')),
-                    switchMap(() => of(hero))
-                );
-  }
-
-  deleteHero(id:number):Observable<number>{
-    const url = `${this.heroesUrl}/${id}`;
-    return this.http.delete<Hero>(url, this.httpOptions).pipe(
-      tap(_ => this.log(`deleted hero id=${id}`)),
-      catchError(this.handleError<Hero>('deleteHero')),
-      switchMap(() => of(id))
-    );
-  }
-
+  
   searchHeroes(term:string):Observable<Hero[]>{
     if(!term.trim()){
       return of([]);

@@ -9,8 +9,6 @@ import { ActionsSubject } from '@ngrx/store';
 import { Subscription, tap } from 'rxjs';
 import { ofType } from '@ngrx/effects';
 import { selectHero } from '../state/hero.selectors';
-import { UndoRedoService } from '../undo-redo.service';
-import { UpdateHeroCommand } from '../command';
 
 @Component({
   selector: 'app-hero-detail',
@@ -21,22 +19,11 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
   hero? : Hero;
   HeroType = Object.entries(HeroType).filter(h => typeof h[1] === 'number');
 
-  private oldHero!:Hero;
-  subscription = new Subscription();
-
   constructor(private route: ActivatedRoute, 
-      private actionsSubject:ActionsSubject,
-      private undoRedoService:UndoRedoService,
       private store: Store,
-      private location: Location) { 
-        
-        this.subscription = this.actionsSubject.pipe(
-          ofType(HeroActions.updateHeroSuccess)
-        ).subscribe(() => { this.goBack() });
-      }
+      private location: Location) { }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -50,7 +37,6 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
         this.store.dispatch(HeroActions.getHeroes());
       }else{
         this.hero = {...h} as Hero;
-        this.oldHero = {...h};
       }
     });
   }
@@ -61,7 +47,8 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
 
   save():void{
     if(this.hero){
-      this.undoRedoService.execute(new UpdateHeroCommand(this.oldHero, this.hero, this.store));
+      this.store.dispatch(HeroActions.updateHero({ hero:this.hero}));
+      this.goBack();
     }
   }
 }

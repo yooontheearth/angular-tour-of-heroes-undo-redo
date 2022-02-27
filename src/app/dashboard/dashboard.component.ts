@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Hero } from '../hero';
 import * as HeroActions from '../state/hero.actions';
 import { MessageService} from '../message.service';
-import { selectHeroes } from '../state/hero.selectors';
+import { selectCurrentHeroes } from '../state/hero.selectors';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit {
   constructor(private store: Store, private messageService:MessageService) { }
 
   ngOnInit(): void {
-    this.store.select(selectHeroes).subscribe(heroes => this.heroes = heroes.slice(1, 5));
+    this.store.select(selectCurrentHeroes).subscribe(heroes => this.heroes = heroes.slice(1, 5));
 
     this.store.dispatch(HeroActions.getHeroes());
   }

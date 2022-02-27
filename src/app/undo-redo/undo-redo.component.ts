@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { UndoRedoService } from '../undo-redo.service';
+import { selectHeroRedoable, selectHeroRedoStack, selectHeroUndoable, selectHeroUndoStack } from '../state/hero.selectors';
+import * as HeroActions from '../state/hero.actions';
 
 @Component({
   selector: 'app-undo-redo',
@@ -9,19 +11,21 @@ import { UndoRedoService } from '../undo-redo.service';
 })
 export class UndoRedoComponent implements OnInit {
 
-  isRedoable!:Observable<boolean>;
-  isUndoable!:Observable<boolean>;
+  isRedoable=this.store.select(selectHeroRedoable);
+  isUndoable=this.store.select(selectHeroUndoable);
+  undoStack=this.store.select(selectHeroUndoStack);
+  redoStack=this.store.select(selectHeroRedoStack);
 
-  constructor(public undoRedoService:UndoRedoService) { }
+  constructor(
+    private store:Store
+    ) { }
 
   ngOnInit(): void {
-    this.isRedoable = this.undoRedoService.getRedoable();
-    this.isUndoable = this.undoRedoService.getUndoable();
   }
   undo():void{
-    this.undoRedoService.undo();
+    this.store.dispatch(HeroActions.undo());
   }
   redo():void{
-    this.undoRedoService.redo();
+    this.store.dispatch(HeroActions.redo());
   }
 }
