@@ -46,14 +46,19 @@ export class StoreService {
   }
 
   addHero(hero:Hero):Observable<Hero>{
-    const command = new AddHeroCommand(hero, this.heroService, this);
+    const command = new AddHeroCommand(hero, this);
     return this.undoRedoService.execute(command);
   }
 
-  addHeroToLocalStore(hero:Hero):void{
-    // Cache a cloned one
-    this.cachedHeroes.push({...hero});
-    this.notifyHeroes();
+  addHeroCore(hero:Hero):Observable<Hero>{
+    return this.heroService.addHero(hero)
+                    .pipe(
+                        tap(hero => {
+                            // Cache a cloned one
+                              this.cachedHeroes.push({...hero});
+                              this.notifyHeroes();
+                        })
+                    );
   }
 
   deleteHero(id:number):Observable<Hero>{
@@ -61,32 +66,41 @@ export class StoreService {
                   filter(hero => !!hero),
                   map(hero => hero as Hero),
                   switchMap(hero => {
-                      const command = new DeleteHeroCommand(hero, this.heroService, this);
+                      const command = new DeleteHeroCommand(hero, this);
                       return this.undoRedoService.execute(command);
                     })
                 );      
   }
 
-  deleteHeroFromLocalStore(id:number):void{
-    this.cachedHeroes = this.cachedHeroes.filter(h => h.id !== id);
-    this.notifyHeroes();
-  }  
+  deleteHeroCore(id:number):Observable<Hero>{
+    return this.heroService.deleteHero(id)
+                    .pipe(
+                        tap(_ => {
+                          this.cachedHeroes = this.cachedHeroes.filter(h => h.id !== id);
+                          this.notifyHeroes();
+                        })
+                    );
+  }
 
   updateHero(hero:Hero):Observable<any>{
     return this.getHero(hero.id).pipe(
                   filter(hero => !!hero),
                   map(hero => hero as Hero),
                   switchMap(old => {
-                      const command = new UpdateHeroCommand(old, Object.assign({}, hero), this.heroService, this);
+                      const command = new UpdateHeroCommand(old, Object.assign({}, hero), this);
                       return this.undoRedoService.execute(command);
                     })
                  );
   }
 
-  updateHeroOnLocalStore(hero:Hero):void{
-    // Update a hero in the cached heroes with a cloned one
-    this.cachedHeroes[this.cachedHeroes.findIndex(h => h.id === hero.id)] = {...hero};
-    this.notifyHeroes();
+  updateHeroCore(hero:Hero):Observable<any>{
+    return this.heroService.updateHero(hero)
+            .pipe(
+              tap(_ => {
+                // Update a hero in the cached heroes with a cloned one
+                this.cachedHeroes[this.cachedHeroes.findIndex(h => h.id === hero.id)] = {...hero};
+                this.notifyHeroes();
+             }));   
   }
 
   private notifyHeroes(){
