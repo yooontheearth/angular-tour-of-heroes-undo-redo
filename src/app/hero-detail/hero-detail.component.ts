@@ -11,33 +11,31 @@ import { ofType } from '@ngrx/effects';
 import { selectHero } from '../state/hero.selectors';
 import { UndoRedoService } from '../undo-redo.service';
 import { UpdateHeroCommand } from '../command';
+import { DestroyableComponent } from '../destoryable.component';
 
 @Component({
   selector: 'app-hero-detail',
   templateUrl: './hero-detail.component.html',
   styleUrls: ['./hero-detail.component.css']
 })
-export class HeroDetailComponent implements OnInit, OnDestroy {
+export class HeroDetailComponent extends DestroyableComponent implements OnInit {
   hero? : Hero;
   HeroType = Object.entries(HeroType).filter(h => typeof h[1] === 'number');
 
   private oldHero!:Hero;
-  subscription = new Subscription();
 
   constructor(private route: ActivatedRoute, 
       private actionsSubject:ActionsSubject,
       private undoRedoService:UndoRedoService,
       private store: Store,
       private location: Location) { 
-        
-        this.subscription = this.actionsSubject.pipe(
-          ofType(HeroActions.updateHeroSuccess)
+        super();
+
+        this.actionsSubject.pipe(
+          ofType(HeroActions.updateHeroSuccess),
+          (s) => this.unsubscribeOnDestroy(s)
         ).subscribe(() => { this.goBack() });
       }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
 
   ngOnInit(): void {
     this.getHero();
@@ -45,7 +43,9 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
 
   getHero(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.store.select(selectHero(id)).subscribe(h => {
+    this.store.select(selectHero(id)).pipe(
+      (s) => this.unsubscribeOnDestroy(s)
+    ).subscribe(h => {
       if(!h){
         this.store.dispatch(HeroActions.getHeroes());
       }else{
